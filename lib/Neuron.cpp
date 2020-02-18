@@ -95,6 +95,9 @@ void Neuron::initNeuron(int _neuronIndex, int _layerIndex, weightInitMethod _wim
         case Act_NONE:
             actMet = 2;
             break;
+        case Act_Relu:
+            actMet = 3;
+            break;
     }
 }
 
@@ -119,7 +122,9 @@ double Neuron::doActivation(double _sum){
         case 2:
             thisoutput = _sum;
             break;
-        //case 3 ReLu
+        case 3:
+            thisoutput = (_sum<=0) ? 0 : _sum; //ReLu
+            break;
     }
     return (thisoutput);
 }
