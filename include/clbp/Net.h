@@ -50,6 +50,7 @@ private:
     int nLayers = 0;
     int nInputs = 0;
     int nOutputs = 0;
+    bool simultaneousUpdate = false;
     const double *inputs = 0;
     Layer **layers = 0;
     double learningRate = 0;

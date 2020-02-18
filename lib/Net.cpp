@@ -20,13 +20,14 @@
 
 using namespace std;
 
-Net::Net(int _nLayers, int* _nNeurons, int _nInputs)
+Net::Net(int _nLayers, int* _nNeurons, int _nInputs, bool _simultaneousUpdate = false)
 
 {
     nLayers = _nLayers; //no. of layers including inputs and ouputs layers
     layers= new Layer*[nLayers];
     int* nNeuronsp = _nNeurons; //number of neurons in each layer expect input
     nInputs=_nInputs; // the no. of inputs to the network (i.e. the first layer)
+    simultaneousUpdate = _simultaneousUpdate; //whether a single update should be used
     int nInput = 0; //temporary variable to use within the scope of for loop
     for (int i=0; i<nLayers; i++){
         int numNeurons= *nNeuronsp; //no. neurons in this layer
@@ -71,11 +72,17 @@ void Net::initNetwork(Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim
 }
 
 void Net::propInputs(){
+    double inputOutput;
     for (int i=0; i<nLayers-1; i++){
         layers[i]->calcOutputs();
         for (int j=0; j<layers[i]->getnNeurons(); j++){
-            double inputOuput = layers[i]->getOutput(j);
-            layers[i+1]->propInputs(j, inputOuput);
+            if (simultaneousUpdate){
+                inputOutput = layers[0]->getOutput(j);
+            }
+            else {
+                inputOutput = layers[i]->getOutput(j);
+            }
+            layers[i+1]->propInputs(j, inputOutput);
         }
     }
     layers[nLayers-1]->calcOutputs();
@@ -98,6 +105,10 @@ int Net::getnLayers(){
 
 int Net::getnInputs(){
     return (nInputs);
+}
+
+bool Net::getBackpropMethod(){
+    return (backpropMethod)
 }
 
 Layer* Net::getLayer(int _layerIndex){

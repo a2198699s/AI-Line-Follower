@@ -119,6 +119,7 @@ double Neuron::doActivation(double _sum){
         case 2:
             thisoutput = _sum;
             break;
+        //case 3 ReLu
     }
     return (thisoutput);
 }
