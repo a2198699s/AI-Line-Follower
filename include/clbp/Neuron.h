@@ -26,7 +26,7 @@ public:
     ~Neuron();
     enum biasInitMethod { B_NONE = 0, B_RANDOM = 1 };
     enum weightInitMethod { W_ZEROS = 0, W_ONES = 1, W_RANDOM = 2 };
-    enum actMethod {Act_Sigmoid = 0, Act_Tanh = 1, Act_NONE = 2};
+    enum actMethod {Act_Sigmoid = 0, Act_Tanh = 1, Act_NONE = 2, Act_Relu = 3};
 
     void initNeuron(int _neuronIndex, int _layerIndex, weightInitMethod _wim, biasInitMethod _bim, Neuron::actMethod _am);
     void setLearningRate(double _learningRate);
