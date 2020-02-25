@@ -22,8 +22,11 @@ while(True):
     resize = cv2.resize(frame,(w,h),interpolation=cv2.INTER_AREA)
     resize = cv2.resize(resize, (width, height), interpolation=cv2.INTER_NEAREST)
     
+    greyscale = cv2.cvtColor(resize,cv2.COLOR_BGR2GRAY)
+
     cv2.imshow('Original', frame)
     cv2.imshow(w_name, resize)
     
+    cv2.imshow('Greyscale',greyscale)
     if cv2.waitKey(1) == 27:
         break
