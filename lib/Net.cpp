@@ -1,6 +1,6 @@
-#include "clbp/Net.h"
-#include "clbp/Layer.h"
-#include "clbp/Neuron.h"
+#include "../include/clbp/Net.h"
+#include "../include/clbp/Layer.h"
+#include "../include/clbp/Neuron.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -107,10 +107,11 @@ int Net::getnInputs(){
     return (nInputs);
 }
 
+/*//There is no such method?
 bool Net::getBackpropMethod(){
     return (backpropMethod)
 }
-
+*/
 Layer* Net::getLayer(int _layerIndex){
     assert(_layerIndex<nLayers);
     return (layers[_layerIndex]);

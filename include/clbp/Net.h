@@ -20,7 +20,7 @@
 
 class Net {
 public:
-    Net(int _nLayers, int *_nNeurons, int _nInputs);
+    Net(int _nLayers, int *_nNeurons, int _nInputs, bool __simultaneousUpdate);
 
     ~Net();
     Layer *getLayer(int _layerIndex);
