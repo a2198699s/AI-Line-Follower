@@ -25,7 +25,7 @@ while(True):
     greyscale = cv2.cvtColor(resize,cv2.COLOR_BGR2GRAY)
 
     cv2.imshow('Original', frame)
-    cv2.imshow(w_name, resize)
+    #cv2.imshow(w_name, resize)
     
     cv2.imshow('Greyscale',greyscale)
     if cv2.waitKey(1) == 27:
