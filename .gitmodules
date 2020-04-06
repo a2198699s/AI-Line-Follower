@@ -1,3 +1,6 @@
 [submodule "followLine"]
 	path = followLine
 	url = https://github.com/mcbottcher/followLine.git
+[submodule "rqt_gui_plugin"]
+	path = rqt_gui_plugin
+	url = https://github.com/mcbottcher/rqt_gui_plugin.git
