@@ -4,6 +4,7 @@
 Catkin is the build system for ROS. Just follow the instructions on the ROS wiki http://wiki.ros.org/ROS/Tutorials to set it up
 
 * Create an empty plugin
+
   Clone this repository https://github.com/leggedrobotics/catkin_create_rqt
   ```
   git clone https://github.com/leggedrobotics/catkin_create_rqt
@@ -29,9 +30,11 @@ Catkin is the build system for ROS. Just follow the instructions on the ROS wiki
   NB. rqt_line_sensor_viewer is the name of the package I want to create
 
 * Adapt package.xml
+
 Here you can add your email and licence and stuff. I think BSD licence is mostly used for ROS
 
 * Adapt plugin.xml
+
 Here you change stuff to do with your plugin. The first group label is the folder that it is kept in in rqt, I called mine Design Special Project 5.
 
 The second group label is the name of your plugin that appears on rqt. You can change the icon, some of which can be found at https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
@@ -39,6 +42,7 @@ The second group label is the name of your plugin that appears on rqt. You can c
 * Add all your QT and ROS stuff
 
 * When finished change directory to your catkin workspace
+
 Then...
 ```
 catkin_make install
