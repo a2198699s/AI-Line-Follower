@@ -23,7 +23,7 @@
   <xacro:property name="cameraAngle" value="20"/>
 
   <xacro:property name="sensorSize" value="0.01"/>
-  <xacro:property name="sensorAngle" value="45"/>
+  <xacro:property name="sensorAngle" value="${PI/2}"/>
   <xacro:property name="sensorSpacing" value="0.04"/>
 
   <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
