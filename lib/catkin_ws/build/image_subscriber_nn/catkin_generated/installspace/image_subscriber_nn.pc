@@ -1,0 +1,8 @@
+prefix=/home/you/AI-Line-Follower/lib/catkin_ws/install
+
+Name: image_subscriber_nn
+Description: Description of image_subscriber_nn
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -limage_subscriber_nn
+Requires: roscpp std_msgs

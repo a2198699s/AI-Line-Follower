@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/you/AI-Line-Follower/lib/catkin_ws/src/image_subscriber_nn/devel/setup.sh

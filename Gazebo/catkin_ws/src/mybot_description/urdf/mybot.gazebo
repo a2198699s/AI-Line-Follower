@@ -10,6 +10,8 @@
  <gazebo>
   <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
     <alwaysOn>true</alwaysOn>
+    <publishWheelTF>true</publishWheelTF>
+    <publishWheelJointState>true</publishWheelJointState>
     <updateRate>100</updateRate>
     <leftJoint>left_wheel_hinge</leftJoint>
     <rightJoint>right_wheel_hinge</rightJoint>
