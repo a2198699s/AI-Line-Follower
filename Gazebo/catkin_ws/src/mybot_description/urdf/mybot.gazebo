@@ -53,7 +53,7 @@
         <image>
           <width>800</width>
           <height>800</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -87,7 +87,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -120,7 +120,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -153,7 +153,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -186,7 +186,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -219,7 +219,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -252,7 +252,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -285,7 +285,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
@@ -318,7 +318,7 @@
         <image>
           <width>1</width>
           <height>1</height>
-          <format>R8G8B8</format>
+          <format>L8</format>
         </image>
         <clip>
           <near>0.02</near>
