@@ -107,34 +107,43 @@ void LineSensorView::setupROS_(){
 void LineSensorView::rawsensorValuesReceived1_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[0]->clear();
     displayValue_[0]->setText(QString::number(msg->data[0]));
+    led_[0]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
+
 }
 void LineSensorView::rawsensorValuesReceived2_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[1]->clear();
     displayValue_[1]->setText(QString::number(msg->data[0]));
+    led_[1]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived3_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[2]->clear();
     displayValue_[2]->setText(QString::number(msg->data[0]));
+    led_[2]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived4_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[3]->clear();
     displayValue_[3]->setText(QString::number(msg->data[0]));
+    led_[3]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived5_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[4]->clear();
     displayValue_[4]->setText(QString::number(msg->data[0]));
+    led_[4]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived6_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[5]->clear();
     displayValue_[5]->setText(QString::number(msg->data[0]));
+    led_[5]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived7_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[6]->clear();
     displayValue_[6]->setText(QString::number(msg->data[0]));
+    led_[6]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 void LineSensorView::rawsensorValuesReceived8_(const sensor_msgs::Image::ConstPtr& msg){
     displayValue_[7]->clear();
     displayValue_[7]->setText(QString::number(msg->data[0]));
+    led_[7]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 
 
