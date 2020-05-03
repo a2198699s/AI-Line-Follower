@@ -5,7 +5,7 @@
 #include "QLed.h"
 
 #include <ros/ros.h>
-#include <std_msgs/Int16MultiArray.h>
+#include <sensor_msgs/Image.h>
 
 #include <QWidget>
 #include <QObject>
@@ -62,8 +62,8 @@ private:
   QLineEdit* displayValue_[NUMBER_OF_SENSORS];
 
   ros::NodeHandle nh_;
-  ros::Subscriber valuesSub_; 
-  ros::Subscriber binvaluesSub_;
+  ros::Subscriber valuesSub_[NUMBER_OF_SENSORS];
+
 
   /* ======================================================================== */
   /* Methods                                                                  */
@@ -82,8 +82,16 @@ private:
   /* Callbacks                                                                */
   /* ======================================================================== */
 
-  void rawsensorValuesReceived_(const std_msgs::Int16MultiArray::ConstPtr& msg);
-  void binsensorValuesReceived_(const std_msgs::Int16MultiArray::ConstPtr& msg);
+  //TODO find a way of only using one function
+  //https://answers.ros.org/question/63991/how-to-make-callback-function-called-by-several-subscriber/?answer=63998#post-id-63998 ... tried this but doesn't work :(
+  void rawsensorValuesReceived1_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived2_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived3_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived4_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived5_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived6_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived7_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived8_(const sensor_msgs::Image::ConstPtr& msg);
 
 protected slots:
 

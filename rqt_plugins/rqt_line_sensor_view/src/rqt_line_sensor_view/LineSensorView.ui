@@ -9,31 +9,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>126</height>
+    <width>475</width>
+    <height>100</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>475</width>
+    <height>100</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>rqt_line_sensor_view</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>19</x>
-     <y>19</y>
-     <width>531</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="mainLayout">
-    <item>
-     <layout class="QHBoxLayout" name="valuesLayout"/>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="ledLayout"/>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="valuesLayout"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="ledLayout"/>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
