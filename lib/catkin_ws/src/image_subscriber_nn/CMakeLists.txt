@@ -123,6 +123,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ../../../include
+  ../../../tiny-dnn
 )
 
 ## Declare a C++ library
