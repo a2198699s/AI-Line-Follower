@@ -81,16 +81,14 @@ void LineSensorView::restoreSettings(
 
 void LineSensorView::setupROS_(){
 
-    valuesSub_[0] = nh_.subscribe("mybot/left_sensor4/image_raw", 1, &LineSensorView::rawsensorValuesReceived1_, this);
-    valuesSub_[1] = nh_.subscribe("mybot/left_sensor3/image_raw", 1, &LineSensorView::rawsensorValuesReceived2_, this);
-    valuesSub_[2] = nh_.subscribe("mybot/left_sensor2/image_raw", 1, &LineSensorView::rawsensorValuesReceived3_, this);
-    valuesSub_[3] = nh_.subscribe("mybot/left_sensor1/image_raw", 1, &LineSensorView::rawsensorValuesReceived4_, this);
-    valuesSub_[4] = nh_.subscribe("mybot/right_sensor1/image_raw", 1, &LineSensorView::rawsensorValuesReceived5_, this);
-    valuesSub_[5] = nh_.subscribe("mybot/right_sensor2/image_raw", 1, &LineSensorView::rawsensorValuesReceived6_, this);
-    valuesSub_[6] = nh_.subscribe("mybot/right_sensor3/image_raw", 1, &LineSensorView::rawsensorValuesReceived7_, this);
-    valuesSub_[7] = nh_.subscribe("mybot/right_sensor4/image_raw", 1, &LineSensorView::rawsensorValuesReceived8_, this);
-
-    //valuesSub_[7] = nh_.subscribe<sensor_msgs/Image>("mybot/right_sensor4/image_raw", 1, boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 7),this);
+    valuesSub_[0] = nh_.subscribe("mybot/left_sensor4/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 0));
+    valuesSub_[1] = nh_.subscribe("mybot/left_sensor3/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 1));
+    valuesSub_[2] = nh_.subscribe("mybot/left_sensor2/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 2));
+    valuesSub_[3] = nh_.subscribe("mybot/left_sensor1/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 3));
+    valuesSub_[4] = nh_.subscribe("mybot/right_sensor1/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 4));
+    valuesSub_[5] = nh_.subscribe("mybot/right_sensor2/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 5));
+    valuesSub_[6] = nh_.subscribe("mybot/right_sensor3/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 6));
+    valuesSub_[7] = nh_.subscribe("mybot/right_sensor4/image_raw", 1, (boost::function<void(const sensor_msgs::Image::ConstPtr&)>)boost::bind(&LineSensorView::rawsensorValuesReceived_,this, _1, 7));
 
 }
 
@@ -104,46 +102,10 @@ void LineSensorView::setupROS_(){
 /* Callbacks                                                                  */
 /* ========================================================================== */
   
-void LineSensorView::rawsensorValuesReceived1_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[0]->clear();
-    displayValue_[0]->setText(QString::number(msg->data[0]));
-    led_[0]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-
-}
-void LineSensorView::rawsensorValuesReceived2_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[1]->clear();
-    displayValue_[1]->setText(QString::number(msg->data[0]));
-    led_[1]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived3_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[2]->clear();
-    displayValue_[2]->setText(QString::number(msg->data[0]));
-    led_[2]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived4_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[3]->clear();
-    displayValue_[3]->setText(QString::number(msg->data[0]));
-    led_[3]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived5_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[4]->clear();
-    displayValue_[4]->setText(QString::number(msg->data[0]));
-    led_[4]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived6_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[5]->clear();
-    displayValue_[5]->setText(QString::number(msg->data[0]));
-    led_[5]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived7_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[6]->clear();
-    displayValue_[6]->setText(QString::number(msg->data[0]));
-    led_[6]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
-}
-void LineSensorView::rawsensorValuesReceived8_(const sensor_msgs::Image::ConstPtr& msg){
-    displayValue_[7]->clear();
-    displayValue_[7]->setText(QString::number(msg->data[0]));
-    led_[7]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
+void LineSensorView::rawsensorValuesReceived_(const sensor_msgs::Image::ConstPtr& msg, int index){
+    displayValue_[index]->clear();
+    displayValue_[index]->setText(QString::number(msg->data[0]));
+    led_[index]->setState(QColor(msg->data[0],msg->data[0],msg->data[0]));
 }
 
 

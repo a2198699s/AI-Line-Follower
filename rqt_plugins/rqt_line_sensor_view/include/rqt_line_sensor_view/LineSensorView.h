@@ -82,16 +82,8 @@ private:
   /* Callbacks                                                                */
   /* ======================================================================== */
 
-  //TODO find a way of only using one function
-  //https://answers.ros.org/question/63991/how-to-make-callback-function-called-by-several-subscriber/?answer=63998#post-id-63998 ... tried this but doesn't work :(
-  void rawsensorValuesReceived1_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived2_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived3_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived4_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived5_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived6_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived7_(const sensor_msgs::Image::ConstPtr& msg);
-  void rawsensorValuesReceived8_(const sensor_msgs::Image::ConstPtr& msg);
+  void rawsensorValuesReceived_(const sensor_msgs::Image::ConstPtr& msg, int index);
+
 
 protected slots:
 
