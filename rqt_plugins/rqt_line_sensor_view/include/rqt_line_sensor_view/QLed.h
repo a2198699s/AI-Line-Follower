@@ -27,6 +27,7 @@ public:
     /*! method to set the colour of the LED.
         \param colour colour argument to change the QLed colour (i.e Qt::red, Qt::green).
     */
+
     void setState(const QColor &colour){
         QPalette p = this->palette();
         p.setColor(QPalette::Window, colour);

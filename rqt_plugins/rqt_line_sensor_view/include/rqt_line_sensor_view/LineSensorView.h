@@ -11,6 +11,8 @@
 #include <QObject>
 #include <QLineEdit>
 
+#include <QTimer>
+
 #define NUMBER_OF_SENSORS 8
 
 namespace linesensorview {
@@ -61,9 +63,12 @@ private:
   QLed* led_[NUMBER_OF_SENSORS];
   QLineEdit* displayValue_[NUMBER_OF_SENSORS];
 
+  QTimer* timer;
+
   ros::NodeHandle nh_;
   ros::Subscriber valuesSub_[NUMBER_OF_SENSORS];
 
+  uint8_t sensorValues[NUMBER_OF_SENSORS];
 
   /* ======================================================================== */
   /* Methods                                                                  */
@@ -91,6 +96,7 @@ protected slots:
   /* Slots                                                                    */
   /* ======================================================================== */
 
+  void updateGuiValues();
 
 
 signals:
