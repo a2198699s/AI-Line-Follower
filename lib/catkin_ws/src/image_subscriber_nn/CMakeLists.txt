@@ -3,6 +3,7 @@ project(image_subscriber_nn)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+#set(catkin_LIBRARIES ${catkin_LIBRARIES})
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
