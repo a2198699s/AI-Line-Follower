@@ -10,3 +10,9 @@
 [submodule "rqt_plugins/AI-Line-Follower"]
 	path = rqt_plugins/AI-Line-Follower
 	url = https://github.com/a2198699s/AI-Line-Follower.git
+[submodule "rqt_plugins/RQT_NerualNetControl"]
+	path = rqt_plugins/RQT_NerualNetControl
+	url = https://github.com/mcbottcher/RQT_NerualNetControl.git
+[submodule "rqt_plugins/RQT_NeuralNetworkDiagnostics"]
+	path = rqt_plugins/RQT_NeuralNetworkDiagnostics
+	url = https://github.com/mcbottcher/RQT_NeuralNetworkDiagnostics.git
