@@ -7,12 +7,13 @@
 #include <ros/ros.h>
 
 #include "rqt_line_sensor_control/GetSensorsConfig.h"
-#include "rqt_line_sensor_control/GetSensorsThreshold.h"
+#include "rqt_line_sensor_control/GetSensorsWeights.h"
 
 #include <QWidget>
 #include <QObject>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QDoubleSpinBox>
 
 #define NUMBER_OF_SENSORS 8
 
@@ -65,11 +66,13 @@ private:
   QLed* setleds_[NUMBER_OF_SENSORS];
   QPushButton* ledButtons_[NUMBER_OF_SENSORS];
 
+  QDoubleSpinBox* sensorWeights[NUMBER_OF_SENSORS];
+
   QSignalMapper* sigmap;
 
   ros::NodeHandle nh_;
   ros::ServiceServer config_service;
-  ros::ServiceServer threshold_service;
+  ros::ServiceServer weights_service;
   
   bool setledsState_[NUMBER_OF_SENSORS];
 
@@ -92,8 +95,8 @@ private:
   bool GetSensorsConfig_callback(rqt_line_sensor_control::GetSensorsConfig::Request &req,
                                  rqt_line_sensor_control::GetSensorsConfig::Response &res);
                                   
-  bool GetSensorsThreshold_callback(rqt_line_sensor_control::GetSensorsThreshold::Request &req,
-                                    rqt_line_sensor_control::GetSensorsThreshold::Response &res);
+  bool GetSensorsWeights_callback(rqt_line_sensor_control::GetSensorsWeights::Request &req,
+                                    rqt_line_sensor_control::GetSensorsWeights::Response &res);
                               
 
 protected slots:

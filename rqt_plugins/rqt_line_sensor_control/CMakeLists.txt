@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   GetSensorsConfig.srv
-  GetSensorsThreshold.srv
+  GetSensorsWeights.srv
 )
 
 generate_messages(
