@@ -93,7 +93,7 @@ void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& ms
 	//imwrite("LinefollowInput.jpg", input_img);
 	float scale = 1.0/255.0;
 	vec_t nn_input;
-	transform(input_img.begin(),input_img.end(),back_inserter(nn_input), [=](float_t c) {return 1-(c * scale);});
+	transform(input_img.begin(),input_img.end(),back_inserter(nn_input), [=](float_t c) {return 1-(c * scale);}); //normalise input image
 	/*cout << "Input values: ";
 	for(int i=0; i<81;i++){
 		if(i%9==0)
@@ -124,8 +124,9 @@ void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& ms
 	
 	//this->output_buffer[this->buffer_idx] = command;
 	float command = this->newcnn.predict(nn_input)[0];
+	command = (command>1) ? 1 : command;
+	command = (command<-1) ? -1 : command;
 	this->send_command(command, SPEED);
-	
 	
 	if(!start_learning){
 		if(this->buff_idx == 2){
