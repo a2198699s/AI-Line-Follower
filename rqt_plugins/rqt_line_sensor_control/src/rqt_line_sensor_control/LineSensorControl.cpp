@@ -44,6 +44,11 @@ void LineSensorControl::initPlugin(qt_gui_cpp::PluginContext& context) {
     
     connect(ledButtons_[i], SIGNAL(clicked()), sigmap, SLOT(map()));
     sigmap->setMapping(ledButtons_[i], i);
+
+    sensorWeights[i] = new QDoubleSpinBox();
+    sensorWeights[i]->setDecimals(3);
+    
+    ui_.sensorWeightsLayout->addWidget(sensorWeights[i]);
     
   }
   
@@ -51,14 +56,14 @@ void LineSensorControl::initPlugin(qt_gui_cpp::PluginContext& context) {
   
   
   config_service = nh_.advertiseService("get_sensors_config", &LineSensorControl::GetSensorsConfig_callback, this);
-  threshold_service = nh_.advertiseService("get_sensors_threshold", &LineSensorControl::GetSensorsThreshold_callback, this);
+  weights_service = nh_.advertiseService("get_sensors_weights", &LineSensorControl::GetSensorsWeights_callback, this);
   
 }
 
 void LineSensorControl::shutdownPlugin() {
   
   config_service.shutdown();
-  threshold_service.shutdown();
+  weights_service.shutdown();
 
 }
 
@@ -104,12 +109,15 @@ void LineSensorControl::restoreSettings(
     return true;
   }
                                   
-  bool LineSensorControl::GetSensorsThreshold_callback(
-                            rqt_line_sensor_control::GetSensorsThreshold::Request &req,
-                            rqt_line_sensor_control::GetSensorsThreshold::Response &res){
+  bool LineSensorControl::GetSensorsWeights_callback(
+                            rqt_line_sensor_control::GetSensorsWeights::Request &req,
+                            rqt_line_sensor_control::GetSensorsWeights::Response &res){
                         
-    res.threshold_value = ui_.threshold_value_box->value();
+    for(int i=0; i<NUMBER_OF_SENSORS; i++){
+      res.sensor_weight.push_back(sensorWeights[i]->value());
     
+    }
+ 
     return true;                              
   }
  
