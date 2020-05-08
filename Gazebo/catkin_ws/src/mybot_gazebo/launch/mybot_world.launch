@@ -7,9 +7,9 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="spawn_x_pos" default="1.5"/>
-  <arg name="spawn_y_pos" default="2.5"/>
-  <arg name="spawn_yaw" default="3.1"/>
+  <arg name="spawn_x_pos" default="1.6"/>
+  <arg name="spawn_y_pos" default="2.6"/>
+  <arg name="spawn_yaw" default="3.3"/>
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
@@ -29,8 +29,6 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
 	args="-urdf -x $(arg spawn_x_pos) -y $(arg spawn_y_pos) -Y $(arg spawn_yaw) -model mybot -param robot_description"/>
 
-  <!-- Run RVIZ-->
-  <node name="$(anon rviz)" pkg="rviz" type="rviz" args="$(find mybot_gazebo)/mybot.rviz" output="screen"/>
 
   <!-- ros_control mybot launch file -->
   <include file="$(find mybot_control)/launch/mybot_control.launch" /> 

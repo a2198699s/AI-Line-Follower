@@ -44,6 +44,10 @@ private:
 	static float calc_error();
 	ros::Publisher motor_pub;
 	void send_command(float command, float speed=0.2);
+	int buff_idx=0;
+	float output_buffer[3];
+	vec_t image_buffer[3];
+	bool start_learning=false;
 	
 	//static int sensor_weights[8];
 };

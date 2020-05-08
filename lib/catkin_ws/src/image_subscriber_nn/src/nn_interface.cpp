@@ -28,14 +28,14 @@ void NeuralNetworkInterface::construct_cnn() {
 
 void NeuralNetworkInterface::sensor_callback(const sensor_msgs::Image::ConstPtr& msg, int index){
 	//std::shared_lock<std::mutex> lck(sensor_mtx);
-	return;
 	sensor_values[index] = (1-msg->data[0]/255.0);
 	//TODO have a better way to check for recpetion of all sensor values...
 	idx++;
 	if(idx==8){
-		cout<<"sens"<<endl;
+		//cout<<"sens"<<endl;
 		idx=0;
 		flag = true;
+		cout << "Sensor values: "<<sensor_values[0] <<" " <<sensor_values[1] <<" "<<sensor_values[2] <<" "<<sensor_values[3] <<" "<<sensor_values[4] <<" "<<sensor_values[5] <<" "<<sensor_values[6] <<" "<<sensor_values[7] << endl;
 		//cond_v.notify_all();
 	}else{
 		flag = false;
@@ -57,7 +57,7 @@ float NeuralNetworkInterface::calc_error(){
 	//while (!flag){}; //TODO: Change from busy waiting
 	//std::shared_lock<std::mutex> lck(sensor_mtx);
 	//while(!flag){} ;//cond_v.wait(lck);
-	float error = abs(sensor_values[4] - sensor_values[3]); //Compare two central sensor values
+	float error = sensor_values[4] - sensor_values[3]; //Compare two central sensor values
 	for (int i=0; i<3; i+=1){
 		error -= sensor_weights[i] * sensor_values[i]; //Negative values for turn left
 		error += sensor_weights[i] * sensor_values[7-i]; //Positive values for turn right
@@ -69,7 +69,7 @@ float NeuralNetworkInterface::calc_error(){
 //vec_t nn_input;
 //nn_input.push_back(val);
 void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& msg){
-	cout<<"c"<<endl;
+	//cout<<"c"<<endl;
 	//auto start = std::chrono::high_resolution_clock::now();
 	cv_bridge::CvImageConstPtr cv_ptr;
 	try{
@@ -110,30 +110,47 @@ void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& ms
 	//tiny_dnn::vec_t out_vector = tiny_dnn::vec_t(ptr, ptr+rows*cols);
 	//double *nn_image = input_img.ptr<double>(0);
 	//cout << typeid(this->newcnn.predict(nn_input)[0]).name()<<endl;
-	cout << "Sensor values: "<<sensor_values[0] <<" " <<sensor_values[1] <<" "<<sensor_values[2] <<" "<<sensor_values[3] <<" "<<sensor_values[4] <<" "<<sensor_values[5] <<" "<<sensor_values[6] <<" "<<sensor_values[7] << endl;
-	if (sensor_values[0]>0.1){
-		send_command(0.4, SPEED);
+	
+	if (sensor_values[1]>0.1 || sensor_values[0]>0.1){
+		send_command(-1, SPEED);
 		cout << "edgel"<<endl;
 		return;
 	}
-	else if (sensor_values[7]>0.1){
-		send_command(-0.4, SPEED);
+	else if (sensor_values[6]>0.1 || sensor_values[7]>0.1){
+		send_command(1, SPEED);
 		cout << "edger"<<endl;
 		return;
 	}
+	
+	//this->output_buffer[this->buffer_idx] = command;
 	float command = this->newcnn.predict(nn_input)[0];
-	//cout<<"Command: " << command <<endl;
 	this->send_command(command, SPEED);
+	
+	
+	if(!start_learning){
+		if(this->buff_idx == 2){
+			start_learning = true;
+		}
+		this->output_buffer[this->buff_idx] = command;
+		this->image_buffer[this->buff_idx] = nn_input;
+		this->buff_idx = (this->buff_idx+1)%3;
+		return;
+	}
+	
+	
+	//cout<<"Command: " << command <<endl;
+	
 	//wait for sensors to be over the place that the camera last saw. 0.165m at 0.2m/s. wait 0.825s
 	//wait(16.5
 	//cout << "Sensor values: "<<sensor_values[0] <<" " <<sensor_values[1] <<" "<<sensor_values[2] <<" "<<sensor_values[3] <<" "<<sensor_values[4] <<" "<<sensor_values[5] <<" "<<sensor_values[6] <<" "<<sensor_values[7] << endl;
+	
 	flag = false;
 	float error = calc_error();
-	//cout << "Command plus error: " << command + error <<endl;
+	cout << "Command: "<<command<<" Label: " << command + error <<endl;
 	vec_t label_vec;
-	vector<vec_t> input_image {{nn_input}};
+	vector<vec_t> input_image {{image_buffer[this->buff_idx]}};
 	//cout<< "label: "<< (command+error) << endl;
-	label_vec.push_back(command+error);
+	label_vec.push_back(this->output_buffer[this->buff_idx]+error);
 	vector<vec_t> input_label {{label_vec}};
 	size_t batch_size = 1;
 	/*cout<<"sizes:"<<endl;
@@ -143,6 +160,10 @@ void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& ms
 	cout<<input_label[0][0]<<endl;
 	*/
 	this->newcnn.fit<mse>(opt, input_image, input_label, batch_size, 3);
+
+	this->output_buffer[this->buff_idx] = command;
+	this->image_buffer[this->buff_idx] = nn_input;
+	this->buff_idx = (this->buff_idx+1)%3;
 	/*
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish -start;
@@ -158,6 +179,7 @@ void NeuralNetworkInterface::image_callback(const sensor_msgs::ImageConstPtr& ms
 }
 	
 void NeuralNetworkInterface::send_command(float command, float speed){
+	cout<<"COMMAND: " << command <<endl;
 	geometry_msgs::Twist motors_msg;
 	motors_msg.linear.x = speed;
 	motors_msg.angular.z = command;
@@ -194,7 +216,7 @@ int main(int argc, char **argv){
 	NeuralNetworkInterface* interface = new NeuralNetworkInterface(motors_pub);//neural_net
 	interface->construct_cnn();
 	image_transport::ImageTransport it(n);
-	image_transport::Subscriber img_sub = it.subscribe("/mybot/camera1/image_raw", 1, &callback_img_test); //&NeuralNetworkInterface::image_callback, interface
+	image_transport::Subscriber img_sub = it.subscribe("/mybot/camera1/image_raw", 1, &NeuralNetworkInterface::image_callback, interface); //&NeuralNetworkInterface::image_callback, interface
 	
 	sub[0] = n.subscribe("mybot/left_sensor4/image_raw", 1, callback0);
 	sub[1] = n.subscribe("mybot/left_sensor3/image_raw", 1, callback1);
