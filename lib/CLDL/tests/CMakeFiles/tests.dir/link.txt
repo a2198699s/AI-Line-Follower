@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/tests.dir/main.cpp.o  -o tests ../libCLDL.a 
