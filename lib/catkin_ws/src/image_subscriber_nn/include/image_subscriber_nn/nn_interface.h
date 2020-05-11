@@ -1,11 +1,11 @@
+#ifndef NN_INTERFACE
+#define NN_INTERFACE
 #include "ros/ros.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/opencv.hpp"
 #include <cv_bridge/cv_bridge.h>
 #include <iostream>
 #include <image_transport/image_transport.h>
-#include "../../../../../include/clbp/Net.h"
-#include "../../../../../include/clbp/Neuron.h"
 #include "../../../../../tiny-dnn/tiny_dnn/tiny_dnn.h"
 #include <typeinfo>
 #include <stdlib.h>
@@ -14,40 +14,38 @@
 #include <chrono>
 
 
+
 using namespace tiny_dnn;
-using namespace tiny_dnn::activation;
-using namespace tiny_dnn::layers;
-using relu = tiny_dnn::relu_layer;
-using lrelu = tiny_dnn::leaky_relu_layer;
-namespace enc = sensor_msgs::image_encodings;
+using namespace std;
+
 
 class NeuralNetworkInterface{
 public:
-	NeuralNetworkInterface(ros::Publisher &motor_pub){//Net* neural_net
-		//this->neural_net = neural_net;
-		this->newcnn = network<sequential>("CBCNN");
-		this->motor_pub = motor_pub;
-		//cout<<typeid(this->newcnn).name() << endl;
-	}
-	void image_callback(const sensor_msgs::ImageConstPtr& msg);
+	
+	static void image_callback(cv_bridge::CvImageConstPtr cv_ptr, bool is_colour);
 	static void sensor_callback(const sensor_msgs::Image::ConstPtr& msg, int index);
-	void construct_cnn();
 	float command;
+	virtual void construct_nn() = 0;
+	virtual float predict(vec_t input) = 0;
+	virtual void train(float error, int epochs=1) = 0;
+	virtual void update_img_buffer(vec_t img) = 0;
+	virtual void publish_motor(geometry_msgs::Twist motors_msg) = 0;
+	static void set_current_interface(NeuralNetworkInterface* interface);
+	static NeuralNetworkInterface *interface;
 
 
-private:
-	Net* neural_net;
-	tiny_dnn::network<sequential> newcnn;
+protected:
 	void *optimiser;
 	static int count; 
 	//static bool flag;
 	static float calc_error();
-	ros::Publisher motor_pub;
+	
 	void send_command(float command, float speed=0.2);
 	int buff_idx=0;
 	float output_buffer[3];
-	vec_t image_buffer[3];
 	bool start_learning=false;
+	
 	
 	//static int sensor_weights[8];
 };
+#endif

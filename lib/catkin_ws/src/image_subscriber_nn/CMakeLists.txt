@@ -123,16 +123,23 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-  ../../../include
+  ../../../CLDL/include
   ../../../tiny-dnn
 )
 
 ## Declare a C++ library
  add_library(neural_net
-   ../../../lib/Neuron.cpp
-   ../../../lib/Layer.cpp
-   ../../../lib/Net.cpp
+   ../../../CLDL/lib/Neuron.cpp
+   ../../../CLDL/lib/Layer.cpp
+   ../../../CLDL/lib/Net.cpp
  )
+
+ add_library(sim_interface
+   src/nn_interface.cpp
+   src/convolutional_net.cpp
+   src/closed_loop_net.cpp
+   #src/main.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -142,7 +149,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(${PROJECT_NAME}_node src/nn_interface.cpp)
+ add_executable(${PROJECT_NAME}_node src/main.cpp)
  #add_executable(../../../lib/Neuron.cpp)
  #add_executable(../../../lib/Layer.cpp)
  #add_executable(../../../lib/Net.cpp)
@@ -161,6 +168,7 @@ include_directories(
 target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
    ${OpenCV_LIBRARIES}
+   sim_interface
    neural_net
  )
 

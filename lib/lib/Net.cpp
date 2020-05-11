@@ -1,6 +1,6 @@
-#include "clbp/Net.h"
-#include "clbp/Layer.h"
-#include "clbp/Neuron.h"
+#include "cldl/Net.h"
+#include "cldl/Layer.h"
+#include "cldl/Neuron.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -29,6 +29,7 @@ Net::Net(int _nLayers, int* _nNeurons, int _nInputs){
     layers= new Layer*[nLayers];
     int* nNeuronsp = _nNeurons; //number of neurons in each layer
     nInputs=_nInputs; // the no. of inputs to the network (i.e. the first layer)
+    //cout << "nInputs: " << nInputs << endl;
     int nInput = 0; //temporary variable to use within the scope of for loop
     for (int i=0; i<nLayers; i++){
         int numNeurons= *nNeuronsp; //no. neurons in this layer
@@ -44,6 +45,7 @@ Net::Net(int _nLayers, int* _nNeurons, int _nInputs){
     }
     nOutputs=layers[nLayers-1]->getnNeurons();
     errorGradient= new double[nLayers];
+    //cout << "net" << endl;
 }
 
 Net::~Net(){
@@ -204,7 +206,7 @@ double Net::getGradient(Neuron::whichError _whichError, Layer::whichGradient _wh
     for (int i=0; i<nLayers; i++) {
         errorGradient[i] = layers[i]->getGradient(_whichError, _whichGradient);
     }
-    double gradientRatio = errorGradient[0] ; ///errorGradient[0];
+    double gradientRatio = errorGradient[nLayers -1] / errorGradient[0] ; ///errorGradient[0];
     assert(std::isfinite(gradientRatio));
     return gradientRatio;
 }
@@ -284,7 +286,7 @@ void Net::echoErrorForward(){
 
 void Net::doEchoError(double _theError){
     setEchoError(_theError);
-    while (layers[nLayers-1]->getEchoError(0) != 0){
+    while (abs(layers[nLayers-1]->getEchoError(0)) >= 0.0001){
         echoErrorBackward();
         updateWeights();
         echoErrorForward();
@@ -390,10 +392,9 @@ void Net::saveWeights(){
 }
 
 void Net::snapWeights(){
-  layers[0]->snapWeights();
-    // for (int i=0; i<nLayers; i++){
-    //     layers[i]->snapWeights();
-    // }
+    for (int i=0; i<nLayers; i++){
+        layers[i]->snapWeights();
+    }
 }
 
 void Net::printNetwork(){

@@ -1,5 +1,5 @@
-#include "clbp/Layer.h"
-#include "clbp/Neuron.h"
+#include "cldl/Layer.h"
+#include "cldl/Neuron.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -16,8 +16,6 @@
 #include <string>
 #include <numeric>
 #include <vector>
-
-
 #include <fstream>
 
 //*************************************************************************************
@@ -36,6 +34,7 @@ Layer::Layer(int _nNeurons, int _nInputs){
     }
     /* each element of "neurons" pointer is itself a pointer
      * to a neuron object with specific no. of inputs*/
+     //cout << "layer" << endl;
 }
 
 Layer::~Layer(){
@@ -97,7 +96,7 @@ void Layer::propInputs(int _index, double _value){
 
 void Layer::calcOutputs(){
     for (int i=0; i<nNeurons; i++){
-        neurons[i]->calcOutput();
+        layerHasReported = neurons[i]->calcOutput(layerHasReported);
     }
 }
 
@@ -216,6 +215,7 @@ double Layer::getGradient(Neuron::whichError _whichError, whichGradient _whichGr
             return minError;
             break;
     }
+    return 0;
 }
 
 //*************************************************************************************
