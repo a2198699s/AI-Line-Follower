@@ -111,6 +111,10 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
+add_dependencies(${PROJECT_NAME}
+${PROJECT_NAME}_generate_messages_cpp
+)
+
 if ("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
   target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 else()
