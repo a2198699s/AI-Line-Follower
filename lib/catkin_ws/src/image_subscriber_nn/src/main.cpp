@@ -3,6 +3,7 @@
 #include "../include/image_subscriber_nn/convolutional_net.h"
 #include <cv_bridge/cv_bridge.h>
 #include "../include/image_subscriber_nn/closed_loop_net.h"
+#include "rqt_neural_net_control/GetNeuralNetConfig.h"
 //#include <image_transport/image_transport.h>
 //#include "../../../../tiny-dnn/tiny_dnn/tiny_dnn.h"
 
@@ -18,6 +19,7 @@ void callback6(const sensor_msgs::Image::ConstPtr& msg){NeuralNetworkInterface::
 void callback7(const sensor_msgs::Image::ConstPtr& msg){NeuralNetworkInterface::sensor_callback(msg, 7);}
 
 void main_callback(const sensor_msgs::Image::ConstPtr& msg){
+	//cv_bridge image processing must be done in main.cpp to avoid c++11 clashes
 	cv_bridge::CvImageConstPtr cv_ptr;
 	try{
 		std:string encode = "rgb8";
@@ -36,26 +38,42 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "listener");
 	ros::NodeHandle n;
 	ros::Subscriber sub[8];
-	/*
-	int layers = 4;
-	int neurons[layers] = {81,40,10,1};
-	int nInputs = 81;
-	double learning_rate = 0.001;
-	Net* neural_net = new Net(layers, neurons, nInputs);
-	neural_net->initNetwork(Neuron::W_ONES, Neuron::B_NONE, Neuron::Act_Sigmoid);
-	neural_net->setLearningRate(learning_rate);
-	*/
+	ros::ServiceClient client = n.serviceClient<rqt_neural_net_control::GetNeuralNetConfig>("neural_net_config");
+	rqt_neural_net_control::GetNeuralNetConfig srv;
+	float lr = 0.01;
+	int loss_fn = 0;
+	int opt = 0;
+	bool conv = 0;
+	int n_layers = 3;
+	vector<int> activations;
+	vector<int> neurons;
+	if(client.call(srv)){
+		lr = srv.response.learning_rate;
+		loss_fn = srv.response.loss_function;
+		opt = srv.response.optimiser;
+		conv = srv.response.convolutional_net_enabled;
+		n_layers = srv.response.number_of_layers;
+		
+		for(int i=0; i<srv.response.number_of_layers; i++){
+			 activations.push_back(srv.response.layer_activations[i]);
+			 //activations.push_back(srv.response.neurons[i]);
+		}
+	}
+	else{
+		activations = {0,0};
+		neurons = {12,1}
+	}
 	ros::Publisher motors_pub = n.advertise<geometry_msgs::Twist>("mybot/cmd_vel", 1);
-	int net_choice = 1;
+	int net_choice = conv;
 	NeuralNetworkInterface *chosen_nn = 0;
 	switch (net_choice){
-		case 1:
+		case 0:
 		{
 			ClosedLoopNet *cl_nn = new ClosedLoopNet(motors_pub);
 			chosen_nn = (NeuralNetworkInterface *)cl_nn;
 			break;
 		}
-		case 2:
+		case 1:
 		{
 			ConvolutionalNet *cnn = new ConvolutionalNet(motors_pub);
 			chosen_nn = (NeuralNetworkInterface *)cnn;
@@ -67,11 +85,9 @@ int main(int argc, char **argv){
 			return -1;
 		}
 	}
-	chosen_nn->construct_nn();
+	chosen_nn->construct_nn(lr, loss_fn, opt, n_layers, activations, neurons);
 	image_transport::ImageTransport it(n);
 	NeuralNetworkInterface::set_current_interface(chosen_nn);
-	//image_transport::Subscriber img_sub = it.subscribe("/mybot/camera1/image_raw", 1, &NeuralNetworkInterface::image_callback, ((NeuralNetworkInterface *)ncnn)); //&NeuralNetworkInterface::image_callback, interface
-	//image_transport::Subscriber img_sub = it.subscribe("/mybot/camera1/image_raw", 1, boost::bind(&NeuralNetworkInterface::image_callback, _1, ncnn));
 	image_transport::Subscriber img_sub = it.subscribe("/mybot/camera1/image_raw", 1, main_callback);
 	
 	sub[0] = n.subscribe("mybot/left_sensor4/image_raw", 1, callback0);

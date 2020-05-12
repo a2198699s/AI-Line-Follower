@@ -13,7 +13,7 @@
 #include "geometry_msgs/Twist.h"
 #include <chrono>
 
-
+#define BUFFER_LENGTH 14
 
 using namespace tiny_dnn;
 using namespace std;
@@ -25,7 +25,7 @@ public:
 	static void image_callback(cv_bridge::CvImageConstPtr cv_ptr, bool is_colour);
 	static void sensor_callback(const sensor_msgs::Image::ConstPtr& msg, int index);
 	float command;
-	virtual void construct_nn() = 0;
+	virtual void construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons) = 0;
 	virtual float predict(vec_t input) = 0;
 	virtual void train(float error, int epochs=1) = 0;
 	virtual void update_img_buffer(vec_t img) = 0;
@@ -42,7 +42,8 @@ protected:
 	
 	void send_command(float command, float speed=0.2);
 	int buff_idx=0;
-	float output_buffer[3];
+	int buff_len=BUFFER_LENGTH;
+	float output_buffer[BUFFER_LENGTH];
 	bool start_learning=false;
 	
 	

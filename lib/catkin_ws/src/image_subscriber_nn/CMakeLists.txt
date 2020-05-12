@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   OpenCV REQUIRED
   cv_bridge
+  rqt_neural_net_control
 )
 
 ## System dependencies are found with CMake's conventions

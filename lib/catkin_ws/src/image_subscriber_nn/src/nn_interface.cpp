@@ -54,30 +54,37 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 	float scale = 1.0/255.0;
 	vec_t nn_input;
 	transform(input_img.begin(),input_img.end(),back_inserter(nn_input), [=](float_t c) {return 1-(c * scale);}); //normalise input image
+	int n = interface->buff_len;
+	//check if in white zone
+	while(--n!=0 && sensor_values[n]==sensor_values[0]);
+	if (n==0){
+		interface->send_command(0, SPEED);
+		return;
+	}
 	
-	if (sensor_values[1]>0.1 || sensor_values[0]>0.1){
+	if (sensor_values[1]>0.2+sensor_values[4] || sensor_values[0]>0.2+sensor_values[4]){
 		interface->send_command(-1, SPEED);
 		cout << "edgel"<<endl;
 		return;
 	}
-	else if (sensor_values[6]>0.1 || sensor_values[7]>0.1){
+	else if (sensor_values[6]>0.2+sensor_values[3] || sensor_values[7]>0.2+sensor_values[3]){
 		interface->send_command(1, SPEED);
 		cout << "edger"<<endl;
 		return;
 	}
 	
 	float command = interface->predict(nn_input);
-	//command = (command>1) ? 1 : command;
-	//command = (command<-1) ? -1 : command;
+	command = (command>1) ? 1 : command;
+	command = (command<-1) ? -1 : command;
 	interface->send_command(command, SPEED);
 	
 	if(!interface->start_learning){
-		if(interface->buff_idx == 2){
+		if(interface->buff_idx == interface->buff_len-1){
 			interface->start_learning = true;
 		}
 		interface->output_buffer[interface->buff_idx] = command;
 		interface->update_img_buffer(nn_input);
-		interface->buff_idx = (interface->buff_idx+1)%3;
+		interface->buff_idx = (interface->buff_idx+1)%interface->buff_len;
 		return;
 	}
 	
@@ -88,7 +95,7 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 
 	interface->output_buffer[interface->buff_idx] = command;
 	interface->update_img_buffer(nn_input);
-	interface->buff_idx = (interface->buff_idx+1)%3;
+	interface->buff_idx = (interface->buff_idx+1)%interface->buff_len;
 	
 	/*
 	auto finish = std::chrono::high_resolution_clock::now();

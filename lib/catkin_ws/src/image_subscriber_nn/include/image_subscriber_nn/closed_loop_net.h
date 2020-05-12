@@ -10,7 +10,7 @@ class ClosedLoopNet: public NeuralNetworkInterface{
 		ClosedLoopNet(ros::Publisher &motor_pub){
 			this->motor_pub = motor_pub;
 		}
-		void construct_nn();
+		void construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons);
 		float predict(vec_t nn_input);
 		void train(float error, int epochs);
 		void update_img_buffer(vec_t img);
@@ -20,7 +20,7 @@ class ClosedLoopNet: public NeuralNetworkInterface{
 	private:
 		
 		ros::Publisher motor_pub;
-		vec_t image_buffer[3];
+		vec_t image_buffer[BUFFER_LENGTH];
 };
 
 #endif

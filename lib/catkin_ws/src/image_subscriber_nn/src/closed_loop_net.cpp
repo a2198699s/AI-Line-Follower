@@ -2,7 +2,7 @@
 
 Net *dnn = 0;
 
-void ClosedLoopNet::construct_nn(){
+void ClosedLoopNet::construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons){
 	constexpr int nLayers = 4;
 	int nNeurons[nLayers] = {9*9,41,20,1};
 	int* nNeuronsPtr = nNeurons;
