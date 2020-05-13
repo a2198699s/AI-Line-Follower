@@ -15,9 +15,12 @@ using softmax = tiny_dnn::softmax_layer;
 
 class ConvolutionalNet: public NeuralNetworkInterface{
 	public:
-		ConvolutionalNet(ros::Publisher &motor_pub){
+		ConvolutionalNet(ros::Publisher &motor_pub, ros::Publisher &out_pub, ros::Publisher &error_pub, ros::Publisher &kernel_pub){
 			this->newcnn = network<sequential>("CBCNN");
 			this->motor_pub = motor_pub;
+			this->kernel_pub = kernel_pub;
+			this->out_pub = out_pub;
+			this->error_pub = error_pub;
 		}
 
 		void construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons);
@@ -25,10 +28,15 @@ class ConvolutionalNet: public NeuralNetworkInterface{
 		void train(float error, int epochs=1);
 		void update_img_buffer(vec_t img);
 		void publish_motor(geometry_msgs::Twist motors_msg);
+		void publish_error(float error);
+		void publish_command(float command);
 	
 	protected:
 		tiny_dnn::network<sequential> newcnn;
 		ros::Publisher motor_pub;
+		ros::Publisher kernel_pub;
+		ros::Publisher out_pub;
+		ros::Publisher error_pub;
 		vec_t image_buffer[BUFFER_LENGTH];
 		int loss_fn;
 		void add_activation_fn(int choice);

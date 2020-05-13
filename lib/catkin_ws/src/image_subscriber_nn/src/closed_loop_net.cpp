@@ -3,12 +3,15 @@
 Net *dnn = 0;
 
 void ClosedLoopNet::construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons){
-	constexpr int nLayers = 4;
-	int nNeurons[nLayers] = {9*9,41,20,1};
+	int nNeurons[n_layers];
+	nNeurons[0] = 9*9;
+	for (int i=1; i<n_layers; i++){
+		nNeurons[i] = neurons[i];
+	}
 	int* nNeuronsPtr = nNeurons;
 	constexpr int nInputs = 81;
-	double learningRate = 0.01;
-	this->dnn = new Net(nLayers, nNeuronsPtr, nInputs);
+	double learningRate = lr;
+	this->dnn = new Net(n_layers, nNeuronsPtr, nInputs);
 	this->dnn->initNetwork(Neuron::W_ONES, Neuron::B_NONE, Neuron::Act_Sigmoid);
     	this->dnn->setLearningRate(learningRate);
     	this->dnn->setErrorCoeff(0,1,0,0,0,0);
@@ -27,8 +30,20 @@ void ClosedLoopNet::train(float error, int epochs){
 		this->dnn->setBackwardError(error);
 		this->dnn->propErrorBackward();
 		this->dnn->updateWeights();
-		this->dnn->saveWeights();
+		//this->dnn->saveWeights();
 	}
+}
+
+void ClosedLoopNet::publish_error(float cl_error){
+	std_msgs::Float64 msg;
+	msg.data = cl_error;
+	this->error_pub.publish(msg);
+}
+
+void ClosedLoopNet::publish_command(float output){
+	std_msgs::Float64 msg;
+	msg.data = output;
+	this->out_pub.publish(msg);
 }
 
 void ClosedLoopNet::update_img_buffer(vec_t img){

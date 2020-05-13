@@ -28,7 +28,7 @@ void NeuralNetworkInterface::sensor_callback(const sensor_msgs::Image::ConstPtr&
 float NeuralNetworkInterface::calc_error(){
 	//while (!flag){}; //TODO: Change from busy waiting
 	float error = 0;
-	sensor_values[4] - sensor_values[3]; //Compare two central sensor values
+	//sensor_values[4] - sensor_values[3]; //Compare two central sensor values
 	for (int i=0; i<4; i+=1){
 		error += sensor_weights[i] * (sensor_values[7-i] - sensor_values[i]); //Compare pairs of sensor values
 	}
@@ -62,22 +62,29 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 		return;
 	}
 	
-	if (sensor_values[1]>0.2+sensor_values[4] || sensor_values[0]>0.2+sensor_values[4]){
-		interface->send_command(-1, SPEED);
+	if (sensor_values[1]>(0.2+sensor_values[4]) || sensor_values[0]>(0.2+sensor_values[4])){
+		float command = (sensor_values[0]>(0.2+sensor_values[4])) ? -0.7 : -0.4;
+		cout<<"Sending command for left turn"<<endl;
+		interface->send_command(command, SPEED);
+		interface->train_cycle(command,nn_input);
 		cout << "edgel"<<endl;
 		return;
 	}
-	else if (sensor_values[6]>0.2+sensor_values[3] || sensor_values[7]>0.2+sensor_values[3]){
-		interface->send_command(1, SPEED);
+	else if (sensor_values[6]>(0.2+sensor_values[3]) || sensor_values[7]>(0.2+sensor_values[3])){
+		float command = (sensor_values[7]>(0.2+sensor_values[3])) ? 0.7 : 0.4;
+		cout<<"Sending command for right turn"<<endl;
+		interface->send_command(command, SPEED);
+		interface->train_cycle(command,nn_input);
 		cout << "edger"<<endl;
 		return;
 	}
 	
 	float command = interface->predict(nn_input);
+	cout<<"original command from net: "<<command<<endl;
 	command = (command>1) ? 1 : command;
 	command = (command<-1) ? -1 : command;
 	interface->send_command(command, SPEED);
-	
+	cout << "made it after command sent"<<endl;
 	if(!interface->start_learning){
 		if(interface->buff_idx == interface->buff_len-1){
 			interface->start_learning = true;
@@ -89,6 +96,8 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 	}
 	
 	flag = false;
+	interface->train_cycle(command,nn_input);
+	/*
 	float error = calc_error();
 	cout << "Command: "<<interface->output_buffer[interface->buff_idx]<<" Label: " << interface->output_buffer[interface->buff_idx] + error <<endl;
 	interface->train(error, 3);
@@ -96,7 +105,7 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 	interface->output_buffer[interface->buff_idx] = command;
 	interface->update_img_buffer(nn_input);
 	interface->buff_idx = (interface->buff_idx+1)%interface->buff_len;
-	
+	*/
 	/*
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish -start;
@@ -110,6 +119,21 @@ void NeuralNetworkInterface::image_callback(cv_bridge::CvImageConstPtr cv_ptr, b
 	this->neural_net->propGlobalErrorBackwardLocally();
 	*/
 	
+}
+
+void NeuralNetworkInterface::train_cycle(float command, vec_t nn_input){
+	if (this->start_learning){
+			flag = false;
+			float error = calc_error();
+			this->publish_error(abs(error));
+			this->publish_command(command);
+			cout << "Command: "<<this->output_buffer[this->buff_idx]<<" Label: " << this->output_buffer[this->buff_idx] + error <<endl;
+			this->train(error, 3);
+
+			this->output_buffer[this->buff_idx] = command;
+			this->update_img_buffer(nn_input);
+			this->buff_idx = (this->buff_idx+1)%this->buff_len;
+	}
 }
 	
 void NeuralNetworkInterface::send_command(float command, float speed){

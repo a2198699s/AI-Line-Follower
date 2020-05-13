@@ -15,7 +15,6 @@ void ConvolutionalNet::construct_nn(float lr, int loss_fn, int opt, int n_layers
 
     this->newcnn << fc(3 * 3 * 3, neurons[0]);
     this->add_activation_fn(activations[0]);
-
     for( int layer=1; layer<n_layers; layer++){
         this->newcnn << fc(neurons[layer-1], neurons[layer]);
     	this->add_activation_fn(activations[layer]);
@@ -46,15 +45,21 @@ void ConvolutionalNet::add_activation_fn(int choice){
 			break;
 		case 4:
 		{
-			float_t epsilon = 1.0; //No support for linear activation - uses leaky relu with unit gradient instead
+			float_t epsilon = 0.01;
 			this->newcnn << lrelu(epsilon); 
 			break;
 		}
 		case 5:
 			this->newcnn << softmax();
 			break;
+		case 6:
+		{
+			float_t epsilon = 1.0; //No support for linear activation - uses leaky relu with unit gradient instead
+			this->newcnn << lrelu(epsilon); 
+			break;
+		}
 		default:
-			cout<<"Undefined choice of activation function";
+			cout<<"Undefined choice of activation function: "<<choice<<endl;
 			break;
 	}
 }
@@ -70,10 +75,22 @@ void ConvolutionalNet::train_cnn(vector<vec_t> input_image, vector<vec_t> input_
 			this->newcnn.fit<mse>(optim, input_image, input_label, batch_size, 3);
 			break;
 		default:
-			cout<<"Undefined choice of activation function";
+			cout<<"Undefined choice of loss function: "<<this->loss_fn<<endl;
 			break;
 	}
 		
+}
+
+void ConvolutionalNet::publish_error(float cl_error){
+	std_msgs::Float64 msg;
+	msg.data = cl_error;
+	this->error_pub.publish(msg);
+}
+
+void ConvolutionalNet::publish_command(float output){
+	std_msgs::Float64 msg;
+	msg.data = output;
+	this->out_pub.publish(msg);
 }
 
 void ConvolutionalNet::set_optimiser(int choice){
@@ -88,7 +105,7 @@ void ConvolutionalNet::set_optimiser(int choice){
 			//TODO
 			break;
 		default:
-			cout<<"Undefined choice of activation function";
+			cout<<"Undefined choice of optimiser: "<<choice<<endl;
 			break;
 	}
 }
@@ -101,7 +118,7 @@ int countRuns = 0;
 void ConvolutionalNet::train(float error, int epochs){
 	vec_t label_vec;
 	vector<vec_t> input_image {{this->image_buffer[this->buff_idx]}};
-	label_vec.push_back(this->output_buffer[this->buff_idx]+error);
+	label_vec.push_back((this->output_buffer[this->buff_idx]+error)/1.5);
 	vector<vec_t> input_label {{label_vec}};
 	this->train_cnn(input_image, input_label);
 	//this->newcnn.fit<mse>(opt, input_image, input_label, batch_size, 3);
@@ -111,17 +128,18 @@ void ConvolutionalNet::train(float error, int epochs){
 	vector<uint8_t> msg_kernel;
 	for (int i=0; i<vec_kernel.size(); i++){
 		msg_kernel.push_back(vec_kernel[i]);
+		//cout<<vec_kernel[i]<<endl;
 	}
 	sensor_msgs::Image msg;
         msg.header.seq = countRuns;
         msg.header.frame_id = "conv_kernels";
-        msg.height = 9;
-        msg.width = 9;
+        msg.height = 5;
+        msg.width = 13;
         msg.encoding = "mono8";
         msg.is_bigendian = 0;
-        msg.step = 9;
+        msg.step = 13;
 	msg.data = msg_kernel;
-	//this->kernel_publisher.publish(msg);
+	this->kernel_pub.publish(msg);
 	//image img = this->newcnn.at<conv>(0).weight_to_image();
 	//img.write("layer0.bmp");
 }
@@ -131,6 +149,5 @@ void ConvolutionalNet::update_img_buffer(vec_t img){
 }
 
 void ConvolutionalNet::publish_motor(geometry_msgs::Twist motors_msg){
-	cout<<"about to publish"<<endl;
 	this->motor_pub.publish(motors_msg);
 }

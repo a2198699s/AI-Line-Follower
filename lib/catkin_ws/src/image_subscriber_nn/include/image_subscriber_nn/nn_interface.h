@@ -1,6 +1,7 @@
 #ifndef NN_INTERFACE
 #define NN_INTERFACE
 #include "ros/ros.h"
+#include "std_msgs/Float64.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/opencv.hpp"
 #include <cv_bridge/cv_bridge.h>
@@ -30,6 +31,8 @@ public:
 	virtual void train(float error, int epochs=1) = 0;
 	virtual void update_img_buffer(vec_t img) = 0;
 	virtual void publish_motor(geometry_msgs::Twist motors_msg) = 0;
+	virtual void publish_error(float error) = 0;
+	virtual void publish_command(float command) = 0;
 	static void set_current_interface(NeuralNetworkInterface* interface);
 	static NeuralNetworkInterface *interface;
 
@@ -39,7 +42,7 @@ protected:
 	static int count; 
 	//static bool flag;
 	static float calc_error();
-	
+	void train_cycle(float command, vec_t nn_input);
 	void send_command(float command, float speed=0.2);
 	int buff_idx=0;
 	int buff_len=BUFFER_LENGTH;

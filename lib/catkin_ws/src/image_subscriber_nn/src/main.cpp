@@ -43,8 +43,8 @@ int main(int argc, char **argv){
 	float lr = 0.01;
 	int loss_fn = 0;
 	int opt = 0;
-	bool conv = 0;
-	int n_layers = 3;
+	bool conv = 1;
+	int n_layers = 2;
 	vector<int> activations;
 	vector<int> neurons;
 	if(client.call(srv)){
@@ -56,26 +56,31 @@ int main(int argc, char **argv){
 		
 		for(int i=0; i<srv.response.number_of_layers; i++){
 			 activations.push_back(srv.response.layer_activations[i]);
-			 //activations.push_back(srv.response.neurons[i]);
+			 neurons.push_back(srv.response.layer_neuron_count[i]);
 		}
 	}
 	else{
-		activations = {0,0};
-		neurons = {12,1}
+		activations = {3,6};
+		neurons = {12,1};
 	}
 	ros::Publisher motors_pub = n.advertise<geometry_msgs::Twist>("mybot/cmd_vel", 1);
-	int net_choice = conv;
+	ros::Publisher out_pub = n.advertise<std_msgs::Float64>("neural_net/output_node", 1);
+	ros::Publisher error_pub = n.advertise<std_msgs::Float64>("neural_net/closed_loop_error", 1);
 	NeuralNetworkInterface *chosen_nn = 0;
-	switch (net_choice){
+	cout<<"Conv: "<<conv <<endl;
+	switch (conv){
 		case 0:
 		{
-			ClosedLoopNet *cl_nn = new ClosedLoopNet(motors_pub);
+			ClosedLoopNet *cl_nn = new ClosedLoopNet(motors_pub, out_pub, error_pub);
+			cout << "CLOSED LOOP NET CHOSEN"<<endl;
 			chosen_nn = (NeuralNetworkInterface *)cl_nn;
 			break;
 		}
 		case 1:
 		{
-			ConvolutionalNet *cnn = new ConvolutionalNet(motors_pub);
+			ros::Publisher kernel_pub = n.advertise<sensor_msgs::Image>("neural_net/kernel_weights", 1);
+			ConvolutionalNet *cnn = new ConvolutionalNet(motors_pub, out_pub, error_pub,kernel_pub);
+			cout << "CONVOLUTIONAL NET CHOSEN"<<endl;
 			chosen_nn = (NeuralNetworkInterface *)cnn;
 			break;
 		}
@@ -85,6 +90,7 @@ int main(int argc, char **argv){
 			return -1;
 		}
 	}
+	cout << "About to construct"<<endl;
 	chosen_nn->construct_nn(lr, loss_fn, opt, n_layers, activations, neurons);
 	image_transport::ImageTransport it(n);
 	NeuralNetworkInterface::set_current_interface(chosen_nn);
