@@ -16,3 +16,6 @@
 [submodule "rqt_plugins/RQT_NeuralNetworkDiagnostics"]
 	path = rqt_plugins/RQT_NeuralNetworkDiagnostics
 	url = https://github.com/mcbottcher/RQT_NeuralNetworkDiagnostics.git
+[submodule "enkiSimulator"]
+	path = enkiSimulator
+	url = https://github.com/mcbottcher/enkiSimulator.git
