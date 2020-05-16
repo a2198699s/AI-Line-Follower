@@ -20,6 +20,8 @@ This project involves investigation into potential improvements to the current s
 
 * __neural_networks:__ todo
 
+* __interface_specifications:__ this directory contains specifications for module interfaces for the framework
+
 
 ## How to use
 
