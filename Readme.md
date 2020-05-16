@@ -8,6 +8,15 @@ The error signal for the neural network is generated using a set of sensors on t
 
 This project involves investigation into potential improvements to the current system; for example constant error propagation, and convelutional input filtering. The current system is described in: https://arxiv.org/pdf/2001.02970.pdf
 
+---
+## Repository Description
+
+This repository provides a ROS (Robot Operating System) based framework for development and testing of neural network implementations with a line following robot. The line following robot can be realised as either a simulation or as a physical robot.
+
+
+
+---
+
 ## Contents
 
 * __rqt_plugins:__ this directory contains the custom rqt GUI plugins used for the project
