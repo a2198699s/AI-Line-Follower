@@ -15,7 +15,7 @@ This directory contains ROS packages which provide custom GUI plugins for rqt (a
 
 ## How to use
 
-Copy the package(s) you want to use to a catkin workspace (catkin_ws).
+Copy the package(s) you want to use to a catkin workspace (catkin_ws/src).
 From the catkin_ws run:
 ```
 catkin_make
