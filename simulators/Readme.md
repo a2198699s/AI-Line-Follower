@@ -1,0 +1,2 @@
+# Simulators
+Two simulation environments have been designed for this project. The set-up guides and descriptions for Gazebo can be found in the [Gazebo Readme](https://github.com/a2198699s/AI-Line-Follower/blob/master/simulators/Gazebo/catkin_ws/src/Readme.md) and an Enki overview is provided in the [Enki Readme](https://github.com/a2198699s/AI-Line-Follower/blob/master/simulators/enkiSimulator/README.md).
