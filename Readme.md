@@ -25,7 +25,7 @@ This repository provides a ROS (Robot Operating System) based framework for deve
 
 * __physical_robot:__ this directory contains work related with the development of the physical robot for the project
 
-* __simulators:__ todo
+* __simulators:__ this directory contains simulator packages used in the framework
 
 * __neural_networks:__ todo
 
