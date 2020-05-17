@@ -38,4 +38,7 @@ In general however, ROS is a common requirement for all modules. The ROS distrib
 
 Instructions for getting started with ROS can be found on the [ROS Wiki](http://wiki.ros.org/ROS/Tutorials).
 
-
+__This repository is also dependent on submodules so when cloning use:__
+```
+git clone https://github.com/a2198699s/AI-Line-Follower --recurse-submodules
+```
