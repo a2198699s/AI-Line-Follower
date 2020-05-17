@@ -25,7 +25,7 @@ This repository provides a ROS (Robot Operating System) based framework for deve
 
 * __simulators:__ this directory contains simulator packages used in the framework
 
-* __neural_networks:__ todo
+* __neural_networks:__ this directory contains the neural network implementations used in the project
 
 * __interface_specifications:__ this directory contains specifications for module interfaces for the framework
 
