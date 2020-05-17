@@ -13,8 +13,6 @@ This project involves investigation into potential improvements to the current s
 
 This repository provides a ROS (Robot Operating System) based framework for development and testing of neural network implementations with a line following robot. The line following robot can be realised as either a simulation or as a physical robot.
 
-
-
 ---
 
 ## Contents
@@ -34,5 +32,10 @@ This repository provides a ROS (Robot Operating System) based framework for deve
 
 ## How to use
 
+Instructions for using each section of the framework can be found in the respective folder.
+
+In general however, ROS is a common requirement for all modules. The ROS distribution used for this project was Melodic ROS.
+
+Instructions for getting started with ROS can be found on the [ROS Wiki](http://wiki.ros.org/ROS/Tutorials).
 
 
