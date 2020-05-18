@@ -1,4 +1,4 @@
-## AI Line Follower
+## Work Inspiration 
 
 This project involves the development of an AI line following robot.
 
