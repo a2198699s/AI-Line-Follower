@@ -35,12 +35,12 @@ public:
 	virtual void publish_command(float command) = 0;
 	static void set_current_interface(NeuralNetworkInterface* interface);
 	static NeuralNetworkInterface *interface;
+	static void update_sensor_weights(vector<double> weights);
 
 
 protected:
 	void *optimiser;
 	static int count; 
-	//static bool flag;
 	static float calc_error();
 	void train_cycle(float command, vec_t nn_input);
 	void send_command(float command, float speed=0.2);
@@ -48,8 +48,5 @@ protected:
 	int buff_len=BUFFER_LENGTH;
 	float output_buffer[BUFFER_LENGTH];
 	bool start_learning=false;
-	
-	
-	//static int sensor_weights[8];
 };
 #endif

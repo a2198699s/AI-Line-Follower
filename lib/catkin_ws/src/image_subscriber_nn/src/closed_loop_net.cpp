@@ -17,17 +17,24 @@ void ClosedLoopNet::construct_nn(float lr, int loss_fn, int opt, int n_layers, v
     	this->dnn->setErrorCoeff(0,1,0,0,0,0);
 }
 
+void ClosedLoopNet::set_multipliers(double in_multiplier, double out_multiplier, double err_multiplier){
+	this->in_multiplier = in_multiplier;
+	this->out_multiplier = out_multiplier;
+	this->err_multiplier = err_multiplier;
+}
+
 float ClosedLoopNet::predict(vec_t nn_input){
 	double *input = (double *) &nn_input[0];
 	this->dnn->setInputs(input);
 	this->dnn->propInputs();
-	return (float)this->dnn->getOutput(0);
+	double out = this->out_multiplier * this->dnn->getOutput(0);
+	return (float)out;
 }	
-//double *nn_image = input_img.ptr<double>(0);
 
 void ClosedLoopNet::train(float error, int epochs){
+	float m_error = (float)(this->err_multiplier) * error;
 	for (int epoch=0; epoch<epochs; epoch++){
-		this->dnn->setBackwardError(error);
+		this->dnn->setBackwardError(m_error);
 		this->dnn->propErrorBackward();
 		this->dnn->updateWeights();
 		//this->dnn->saveWeights();

@@ -1,11 +1,9 @@
-//#include "ros/ros.h"
-//#include "../include/image_subscriber_nn/nn_interface.h"
+
 #include "../include/image_subscriber_nn/convolutional_net.h"
 #include <cv_bridge/cv_bridge.h>
 #include "../include/image_subscriber_nn/closed_loop_net.h"
 #include "rqt_neural_net_control/GetNeuralNetConfig.h"
-//#include <image_transport/image_transport.h>
-//#include "../../../../tiny-dnn/tiny_dnn/tiny_dnn.h"
+#include "rqt_line_sensor_control/GetSensorsWeights.h"
 
 using namespace std;
 
@@ -33,6 +31,7 @@ void main_callback(const sensor_msgs::Image::ConstPtr& msg){
 	}
 	NeuralNetworkInterface::image_callback(cv_ptr, sensor_msgs::image_encodings::isColor(msg->encoding));
 }
+	
 
 int main(int argc, char **argv){
 	ros::init(argc, argv, "listener");
@@ -45,6 +44,9 @@ int main(int argc, char **argv){
 	int opt = 0;
 	bool conv = 1;
 	int n_layers = 2;
+	double in_multiplier = 1.0;
+	double out_multiplier = 1.0;
+	double err_multiplier = 1.0;
 	vector<int> activations;
 	vector<int> neurons;
 	if(client.call(srv)){
@@ -53,6 +55,9 @@ int main(int argc, char **argv){
 		opt = srv.response.optimiser;
 		conv = srv.response.convolutional_net_enabled;
 		n_layers = srv.response.number_of_layers;
+		in_multiplier = srv.response.input_multiplier;
+		out_multiplier = srv.response.output_multiplier;
+		err_multiplier = srv.response.closed_loop_error_multiplier;
 		
 		for(int i=0; i<srv.response.number_of_layers; i++){
 			 activations.push_back(srv.response.layer_activations[i]);
@@ -63,15 +68,20 @@ int main(int argc, char **argv){
 		activations = {3,6};
 		neurons = {12,1};
 	}
+	rqt_line_sensor_control::GetSensorsWeights sensor_srv;
+	ros::ServiceClient sensor_client = n.serviceClient<rqt_line_sensor_control::GetSensorsWeights>("get_sensor_weights");
+	if (sensor_client.call(sensor_srv)){
+		NeuralNetworkInterface::update_sensor_weights(sensor_srv.response.sensor_weight);
+	}
 	ros::Publisher motors_pub = n.advertise<geometry_msgs::Twist>("mybot/cmd_vel", 1);
 	ros::Publisher out_pub = n.advertise<std_msgs::Float64>("neural_net/output_node", 1);
 	ros::Publisher error_pub = n.advertise<std_msgs::Float64>("neural_net/closed_loop_error", 1);
 	NeuralNetworkInterface *chosen_nn = 0;
-	cout<<"Conv: "<<conv <<endl;
 	switch (conv){
 		case 0:
 		{
 			ClosedLoopNet *cl_nn = new ClosedLoopNet(motors_pub, out_pub, error_pub);
+			cl_nn->set_multipliers(in_multiplier, out_multiplier, err_multiplier);
 			cout << "CLOSED LOOP NET CHOSEN"<<endl;
 			chosen_nn = (NeuralNetworkInterface *)cl_nn;
 			break;
@@ -90,7 +100,6 @@ int main(int argc, char **argv){
 			return -1;
 		}
 	}
-	cout << "About to construct"<<endl;
 	chosen_nn->construct_nn(lr, loss_fn, opt, n_layers, activations, neurons);
 	image_transport::ImageTransport it(n);
 	NeuralNetworkInterface::set_current_interface(chosen_nn);
@@ -108,23 +117,4 @@ int main(int argc, char **argv){
 	ros::Rate r(60);
 	ros::spin();
 	return 1;
-	/*
-	ros::Rate loop_rate(60);
-	while(ros::ok()){
-		if(flag){
-			flag = false;
-			geometry_msgs::Twist motors_msg;
-			//calculateMotorSpeeds(motors_msg);
-			//motors_msg.linear.y = 100.0;
-			motors_msg.linear.x = 0.2;
-			motors_msg.angular.z = interface->command;
-			motors_pub.publish(motors_msg);
-		}
-	
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
-
-	return 0;
-	*/
 }

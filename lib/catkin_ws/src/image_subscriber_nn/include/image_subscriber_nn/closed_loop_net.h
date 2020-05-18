@@ -20,10 +20,13 @@ class ClosedLoopNet: public NeuralNetworkInterface{
 		void publish_motor(geometry_msgs::Twist motors_msg);
 		void publish_error(float error);
 		void publish_command(float command);
+		void set_multipliers(double in_multiplier, double out_multiplier, double err_multiplier);
 		Net *dnn;
 
 	protected:
-		
+		double in_multiplier;
+		double out_multiplier;
+		double err_multiplier;
 		ros::Publisher motor_pub;
 		ros::Publisher out_pub;
 		ros::Publisher error_pub;

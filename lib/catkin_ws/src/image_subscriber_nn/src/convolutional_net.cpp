@@ -1,15 +1,7 @@
 #include "../include/image_subscriber_nn/convolutional_net.h"
 
-//auto optim;
 gradient_descent optim;
 void ConvolutionalNet::construct_nn(float lr, int loss_fn, int opt, int n_layers, vector<int>activations, vector<int>neurons){ 
-    /*
-    float_t epsilon = 1.0;
-    this->newcnn << conv(9, 9, 3, 1, 3)
-    		 << max_pool(7, 7, 3, 2);
-    this->newcnn << fc(3 * 3 * 3, 12) << relu()
-        << fc(12, 1) << lrelu(epsilon);   //No support for linear activation - uses leaky relu with unit gradient instead
-    */
     this->newcnn << conv(9, 9, 3, 1, 3)
     		 << max_pool(7, 7, 3, 2);
 
@@ -20,8 +12,6 @@ void ConvolutionalNet::construct_nn(float lr, int loss_fn, int opt, int n_layers
     	this->add_activation_fn(activations[layer]);
     }
     this->loss_fn = loss_fn;
-    //this->set_optimiser(opt);
-    //auto _optim = *this->optim;
     optim.alpha = lr;
 
     assert(this->newcnn.in_data_size() == 9 * 9);
@@ -66,7 +56,6 @@ void ConvolutionalNet::add_activation_fn(int choice){
 
 void ConvolutionalNet::train_cnn(vector<vec_t> input_image, vector<vec_t> input_label){
 	size_t batch_size = 1;
-	//auto _optim = *this->optim;
 	switch (this->loss_fn){
 		case 0:
 			this->newcnn.fit<cross_entropy>(optim, input_image, input_label, batch_size, 3);
@@ -93,22 +82,6 @@ void ConvolutionalNet::publish_command(float output){
 	this->out_pub.publish(msg);
 }
 
-void ConvolutionalNet::set_optimiser(int choice){
-	switch (choice){
-		case 0:
-		{
-			gradient_descent gd;
-			//this->optim = &gd; //(Optimizer)
-			break;
-		}
-		case 1:
-			//TODO
-			break;
-		default:
-			cout<<"Undefined choice of optimiser: "<<choice<<endl;
-			break;
-	}
-}
 
 float ConvolutionalNet::predict(vec_t nn_input){
 	this->newcnn.predict(nn_input)[0];
@@ -121,14 +94,11 @@ void ConvolutionalNet::train(float error, int epochs){
 	label_vec.push_back((this->output_buffer[this->buff_idx]+error)/1.5);
 	vector<vec_t> input_label {{label_vec}};
 	this->train_cnn(input_image, input_label);
-	//this->newcnn.fit<mse>(opt, input_image, input_label, batch_size, 3);
-	//this->newcnn.fit<this->loss_fn>(this->optim, input_image, input_label, batch_size, 3);
-	image<uint8_t> kernel = this->newcnn.at<conv>(0).weight_to_image(); //tiny_dnn::image
-	vec_t vec_kernel = kernel.to_vec(); //kernel.to_rgb<uint8_t>();
+	image<uint8_t> kernel = this->newcnn.at<conv>(0).weight_to_image();
+	vec_t vec_kernel = kernel.to_vec(); 
 	vector<uint8_t> msg_kernel;
 	for (int i=0; i<vec_kernel.size(); i++){
 		msg_kernel.push_back(vec_kernel[i]);
-		//cout<<vec_kernel[i]<<endl;
 	}
 	sensor_msgs::Image msg;
         msg.header.seq = countRuns;
@@ -140,8 +110,6 @@ void ConvolutionalNet::train(float error, int epochs){
         msg.step = 13;
 	msg.data = msg_kernel;
 	this->kernel_pub.publish(msg);
-	//image img = this->newcnn.at<conv>(0).weight_to_image();
-	//img.write("layer0.bmp");
 }
 
 void ConvolutionalNet::update_img_buffer(vec_t img){
