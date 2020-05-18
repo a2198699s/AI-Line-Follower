@@ -1,0 +1,19 @@
+<library path="lib/librqt_neural_net_control">
+  <class name="neuralnetcontrol/NeuralNetControl"
+         type="neuralnetcontrol::NeuralNetControl"
+         base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to control the configuration of a neural network package
+    </description>
+    <qtgui>
+      <group>
+        <label>Design Special Project 5</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to Design Special Project 5</statustip>
+      </group>
+      <label>Neural Network Configuration</label>
+      <icon type="theme">weather-few-clouds</icon>
+      <statustip>A GUI plugin to control the configuration of a neural network package</statustip>
+    </qtgui>
+  </class>
+</library>

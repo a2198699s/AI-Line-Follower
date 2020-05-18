@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<launch>
-  <node pkg="rqt_line_sensor_control" type="rqt_line_sensor_control" name="rqt_line_sensor_control_node"
-        output="screen">
-  </node>
-</launch>
