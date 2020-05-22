@@ -8,6 +8,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include "tiny_dnn/util/util.h"
 
@@ -152,6 +153,7 @@ class cross_entropy_multiclass {
 
 template <typename E>
 vec_t gradient(const vec_t &y, const vec_t &t) {
+  //std::cout<<"Y: "<<y.size() <<" and T: "<<t.size()<<endl;
   assert(y.size() == t.size());
   return E::df(y, t);
 }
@@ -194,6 +196,8 @@ std::vector<tensor_t> gradient(const std::vector<tensor_t> &y,
   const size_t sample_count  = y.size();
   const size_t channel_count = y[0].size();
 
+  //std::cout<<"size y: "<<y.size() <<"channels y: "<< y[0].size() << "t size: "<< t[0].size()<<endl;
+
   std::vector<tensor_t> gradients(sample_count);
 
   CNN_UNREFERENCED_PARAMETER(channel_count);
@@ -206,7 +210,7 @@ std::vector<tensor_t> gradient(const std::vector<tensor_t> &y,
     assert(t[sample].size() == channel_count);
     assert(t_cost.empty() || t_cost[sample].empty() ||
            t_cost[sample].size() == channel_count);
-
+    //cout<<"SIZES: "<<y[sample].size() << "t: "<<t[sample].size()<<endl;
     gradients[sample] = gradient<E>(y[sample], t[sample]);
 
     if (sample < t_cost.size()) {

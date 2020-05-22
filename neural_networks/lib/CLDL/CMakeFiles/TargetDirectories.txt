@@ -1,6 +1,0 @@
-/home/you/AI-Line-Follower/lib/CLDL/CMakeFiles/rebuild_cache.dir
-/home/you/AI-Line-Follower/lib/CLDL/CMakeFiles/CLDL.dir
-/home/you/AI-Line-Follower/lib/CLDL/CMakeFiles/edit_cache.dir
-/home/you/AI-Line-Follower/lib/CLDL/tests/CMakeFiles/rebuild_cache.dir
-/home/you/AI-Line-Follower/lib/CLDL/tests/CMakeFiles/tests.dir
-/home/you/AI-Line-Follower/lib/CLDL/tests/CMakeFiles/edit_cache.dir

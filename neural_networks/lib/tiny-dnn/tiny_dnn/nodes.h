@@ -291,9 +291,10 @@ class sequential : public nodes {
     assert(reordered_data.size() == 1);
 
     nodes_.front()->set_in_data(&reordered_data[0], 1);
-
+    int count = 0;
     for (auto l : nodes_) {
       l->forward();
+      count++;
     }
 
     std::vector<const tensor_t *> out;

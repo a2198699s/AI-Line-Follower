@@ -58,7 +58,7 @@
  * Enable Image API support.
  * Currently we use stb by default.
  **/
-// #define DNN_USE_IMAGE_API
+ #define DNN_USE_IMAGE_API
 
 /**
  * Enable Gemmlowp support.

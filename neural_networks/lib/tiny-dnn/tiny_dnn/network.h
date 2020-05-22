@@ -631,7 +631,8 @@ class network {
   /**
    * return total number of elements of input data
    */
-  size_t in_data_size() const { return net_.in_data_size(); }
+  size_t in_data_size() const { 
+	return net_.in_data_size(); }
 
   /**
    * set weight initializer to all layers
